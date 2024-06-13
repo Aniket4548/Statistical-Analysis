@@ -27,7 +27,7 @@ st.markdown("<h1 style='text-align: center;'>Statistical Analysis of Auto-MPG Da
 df = pd.read_csv("auto-mpg-Dataset.csv")
 
 st.markdown("<h1 style='text-align: center;'>Pre-processing of the data</h1>", unsafe_allow_html=True)# Generate profiling report
-pr = df.profile_report(title="Auto-MPG EDA", correlations={"auto": {"calculate": False}}, dark_mode=True, explorative=True, lazy=False)
+pr = df.profile_report(title="Auto-MPG EDA", correlations={"auto": {"calculate": False}}, dark_mode=True, explorative=True, lazy=False, progress_bar=False)
 
 
 # Use the entire screen for the profiling report
