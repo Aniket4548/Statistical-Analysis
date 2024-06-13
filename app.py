@@ -19,8 +19,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
     page_title="Statistical Analysis",
-    page_icon="📊",
-    theme="light"
+    page_icon="📊"
 )
 
 st.markdown("<h1 style='text-align: center;'>Statistical Analysis of Auto-MPG Dataset</h1>", unsafe_allow_html=True)
