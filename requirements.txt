@@ -9,3 +9,4 @@ visions[type-image-path]==0.7.5
 phik==0.12.2
 joblib==1.1.1
 scikit-learn==1.2.2
+streamlit_pandas_profiling==0.1.3
