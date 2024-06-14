@@ -271,7 +271,7 @@ st.write('##### acceleration is still gaussian, skewness is removed from mpg & w
 fig4 = pyplot.figure(figsize=(18, 8))
 
 for i, num in enumerate(['mpg', 'displacement', 'horsepower', 'acceleration']):
-    ax = pyplot.subplot(2, 3, i + 1)
+    ax = pyplot.subplot(2, 2, i + 1)
     qqplot(df_tfnum[num], line='s', ax=ax)
     ax.set_title(f'Q-Q Plot - Transformed {num}')
     pyplot.tight_layout()
