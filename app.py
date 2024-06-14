@@ -6,13 +6,11 @@ import itertools
 import streamlit as st
 
 from ydata_profiling import ProfileReport
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn import feature_selection
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 from streamlit_pandas_profiling import st_profile_report
 from statsmodels.graphics.gofplots import qqplot
-
-
 
 # Set up Streamlit app layout to full screen
 st.set_page_config(
@@ -23,15 +21,18 @@ st.set_page_config(
 )
 
 st.markdown("<h1 style='text-align: center;'>Statistical Analysis of Auto-MPG Dataset</h1>", unsafe_allow_html=True)
+
 # Load dataset
 df = pd.read_csv("auto-mpg-Dataset.csv")
 
-st.markdown("<h1 style='text-align: center;'>Pre-processing of the data</h1>", unsafe_allow_html=True)# Generate profiling report
-pr = df.profile_report(title="Auto-MPG EDA", correlations={"auto": {"calculate": False}}, dark_mode=True, explorative=True, lazy=False, progress_bar=False)
+st.markdown("<h1 style='text-align: center;'>Pre-processing of the data</h1>", unsafe_allow_html=True)
 
+# Generate profiling report
+pr = df.profile_report(title="Auto-MPG EDA", correlations={"auto": {"calculate": False}}, dark_mode=True, explorative=True, lazy=False, progress_bar=False)
 
 # Use the entire screen for the profiling report
 st.write("##### Below is the dataset preview:")
+
 # Center align the table
 st.markdown("""
 <style>
@@ -44,7 +45,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.table(df.head(10))
-
 
 st.write("##### Below is the profiling report:")
 
@@ -64,8 +64,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-st.write('#### Make two distinct list for categorical and numerical column')
+st.write('#### Make two distinct lists for categorical and numerical columns')
 
 def classify_columns(df):
     categorical_cols = []
@@ -89,55 +88,45 @@ st.write(categorical_cols)
 st.write("##### Numerical Columns:")
 st.write(numerical_cols)
 
-
-st.markdown('#### cylinders and model_year are also categorical so lets update the lists')
+st.markdown('#### Update lists as cylinders and model_year are also categorical')
 categorical_cols.extend(['cylinders', 'model_year'])
 numerical_cols.remove('cylinders')
 numerical_cols.remove('model_year')
 
-st.write("##### Categorical Columns:")
+st.write("##### Updated Categorical Columns:")
 st.write(categorical_cols)
 
-st.write("##### Numerical Columns:")
+st.write("##### Updated Numerical Columns:")
 st.write(numerical_cols)
 
-
-st.write('#### Orignal shape') # (392, 9)
+st.write('#### Original shape:')
 st.write(df.shape) # (392, 9)
 
 # let's print these 6 `nan` containing rows 
 st.markdown('#### NaNs in the dataset:')
 st.table(df[df.isnull().any(axis=1)])
 
-
-
 st.markdown('#### Drop the rows with NaNs')
-# for now remove all nan rows as they are just 1.5%
-df = df[~df.isnull().any(axis=1)]
-df.reset_index(inplace=True)
-df.drop('index', inplace=True, axis=1)
+df = df.dropna().reset_index(drop=True)
 
-st.markdown('#### New shape') # (392, 9)
+st.markdown('#### New shape:')
 st.write(df.shape) # (392, 9)
-# 
-st.markdown('#### Let\'s check for duplicates')
-st.write(print(f'total duplicate rows: {df.duplicated().sum()}'))
 
-st.markdown('#### Remove extra spaces if any')
-# remove extra spaces if any
+st.markdown('#### Check for duplicates:')
+st.write(f'Total duplicate rows: {df.duplicated().sum()}')
+
+st.markdown('#### Remove extra spaces if any:')
 for col in ['origin', 'name']:
-    df[col] = df[col].apply(lambda x: ' '.join(x.split()))
+    df[col] = df[col].str.strip()
 
-
-st.markdown('#### Dividing mpg into three regions as Low, Medium and High')
-df['mpg_level'] = df['mpg'].apply(lambda x: 'low' if x<17 else 'high' if x>29 else 'medium')
+st.markdown('#### Dividing mpg into three regions: Low, Medium, and High')
+df['mpg_level'] = df['mpg'].apply(lambda x: 'low' if x < 17 else 'high' if x > 29 else 'medium')
 categorical_cols.append('mpg_level')
 
-st.markdown('#### Append mpg_level in Categorical Variables:')
+st.markdown('#### Updated Categorical Variables:')
 st.write(categorical_cols)
 
-
-st.markdown('#### Let\'s group all variables together having the same type')
+st.markdown('#### Group all variables together having the same type:')
 df = pd.concat((df[categorical_cols], df[numerical_cols]), axis=1)
 st.table(df.head())
 
