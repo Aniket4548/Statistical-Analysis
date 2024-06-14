@@ -21,15 +21,15 @@ st.set_page_config(
 )
 
 st.markdown("<h1 style='text-align: center;'>Statistical Analysis of Auto-MPG Dataset</h1>", unsafe_allow_html=True)
-
+st.write('')
 # Load dataset
 df = pd.read_csv("auto-mpg-Dataset.csv")
 
 st.markdown("<h1 style='text-align: center;'>Pre-processing of the data</h1>", unsafe_allow_html=True)
-
+st.write('')
 # Generate profiling report
 pr = df.profile_report(title="Auto-MPG EDA", correlations={"auto": {"calculate": False}}, dark_mode=True, explorative=True, lazy=False, progress_bar=False)
-
+st.write('')
 # Use the entire screen for the profiling report
 st.write("##### Below is the dataset preview:")
 
@@ -45,7 +45,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.table(df.head(10))
-
+st.write('')
 st.write("##### Below is the profiling report:")
 
 # Creating a container that takes up the full width of the screen
@@ -63,7 +63,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
+st.write('')
 st.write('#### Make two distinct lists for categorical and numerical columns')
 
 def classify_columns(df):
@@ -87,7 +87,7 @@ st.write(categorical_cols)
 
 st.write("##### Numerical Columns:")
 st.write(numerical_cols)
-
+st.write('')
 st.markdown('#### Update lists as cylinders and model_year are also categorical')
 categorical_cols.extend(['cylinders', 'model_year'])
 numerical_cols.remove('cylinders')
@@ -98,34 +98,34 @@ st.write(categorical_cols)
 
 st.write("##### Updated Numerical Columns:")
 st.write(numerical_cols)
-
+st.write('')
 st.write('#### Original shape:')
 st.write(df.shape) # (392, 9)
-
+st.write('')
 # let's print these 6 `nan` containing rows 
 st.markdown('#### NaNs in the dataset:')
 st.table(df[df.isnull().any(axis=1)])
-
+st.write('')
 st.markdown('#### Drop the rows with NaNs')
 df = df.dropna().reset_index(drop=True)
 
 st.markdown('#### New shape:')
 st.write(df.shape) # (392, 9)
-
+st.write('')
 st.markdown('#### Check for duplicates:')
 st.write(f'Total duplicate rows: {df.duplicated().sum()}')
-
+st.write('')
 st.markdown('#### Remove extra spaces if any:')
 for col in ['origin', 'name']:
     df[col] = df[col].str.strip()
-
+st.write('')
 st.markdown('#### Dividing mpg into three regions: Low, Medium, and High')
 df['mpg_level'] = df['mpg'].apply(lambda x: 'low' if x < 17 else 'high' if x > 29 else 'medium')
 categorical_cols.append('mpg_level')
-
+st.write('')
 st.markdown('#### Updated Categorical Variables:')
 st.write(categorical_cols)
-
+st.write('')
 st.markdown('#### Group all variables together having the same type:')
 df = pd.concat((df[categorical_cols], df[numerical_cols]), axis=1)
 st.table(df.head())
@@ -133,21 +133,22 @@ st.table(df.head())
 
 
 st.markdown("<h1 style='text-align: center;'>Statistical Analysis</h1>", unsafe_allow_html=True)
+st.write('')
 ALPHA = 0.05
 st.write("##### ALPHA =",ALPHA)
-
+st.write('')
 st.markdown('## Tests for independence between two categorical variables')
-
+st.write('')
 st.markdown('#### Contingency Table (aka frequency table)')
 
 st.write('##### Contingency Table for origin and model year')
 st.table(pd.crosstab(df.origin, df.model_year))
-
+st.write('')
 st.write('##### Contingency Table for origin and mpg_level')
 observed_values = pd.crosstab(df.origin, df.mpg_level)
 st.table(observed_values)
 
-
+st.write('')
 st.markdown('#### Chi-Square Test')
 st.write('##### Use chi2_contingency function of scipy')
 
@@ -161,7 +162,7 @@ if p <= ALPHA:
     st.write(f'##### Rejected H0 under significance level {ALPHA} `origin` & `model_year` are dependent.')
 else:
     st.write(f'##### Fail to reject H0 due to lack of evidence under significance level {ALPHA} `origin` & `model_year` are independent.')
-
+st.write('')
 st.markdown('#### Use chi2 to test dependency of all categorical attributes with mpg_level')
 
 df_cat_label =  pd.concat([df.loc[:, ['origin', 'mpg_level']].apply(lambda x: LabelEncoder().fit_transform(x)),
@@ -184,12 +185,13 @@ df_chi2['H0'] = df_chi2.p.apply(lambda x: 'rejected' if x <= ALPHA else 'fail to
 df_chi2['relation'] = df_chi2.H0.apply(lambda x: 'dependent' if x=='rejected' else 'independent')
 
 st.table(df_chi2)
-
+st.write('')
 st.markdown('## Statistical Tests for Numerical Attributes')
-
+st.write('')
 st.write("#### Numerical Columns",numerical_cols)
-
+st.write('')
 st.write('### Visual Noramlity Checks')
+st.write('')
 st.write('#### Check whether mpg and weight are log-normal or not')
 # Create a figure for the histograms with log transformation
 fig1 = pyplot.figure(1, (10, 4))
@@ -226,9 +228,9 @@ st.pyplot(fig2)
 
 st.write('##### Both histplot & qqplot of acceleration indicates that it is indeed close to gaussian')
 
-
+st.write('')
 st.write('### Statistical Normality Tests')
-
+st.write('')
 st.write('#### Hypothesis testing for the normality of numerical attributes using the shapiro wilk test')
 
 def shapiro_wilk_test(df: pd.DataFrame, cols: list, alpha=0.05):
@@ -245,7 +247,7 @@ _, p = stats.shapiro(df.acceleration)
 st.write("##### p = ", p) # 0.03054318018257618
 
 shapiro_wilk_test(df, numerical_cols)
-
+st.write('')
 st.write('#### Apply power transform to make the data more gaussian like')
 
 from sklearn.preprocessing import PowerTransformer
@@ -284,9 +286,9 @@ _, p = stats.shapiro(df_tfnum.acceleration)
 st.write("##### p = ", p) 
 st.write('##### So, acceleration is normally distributed both visually and statistically.')
 
-
+st.write('')
 st.write('## Tests for correlation between two continuous variables')
-
+st.write('')
 
 st.write('##### H_0: mpg and other attribute are not correlated, alpha=0.05')
 for num in numerical_cols:
@@ -303,7 +305,7 @@ for num in numerical_cols:
     else:
         st.write(f'''Fail to reject H0 due to lack of evidence under significance level {ALPHA}, 
               mpg & {num} are not correlated''')
-
+st.write('')
 st.write('##### Create a data-frame for the correlation b/w every pair')
 
 
@@ -344,9 +346,9 @@ st.table(df_corr)
 
 
 st.write('##### Correlation of pairs (mpg, acceleration), (displacement, acceleration) and (weight, acceleration) is moderate whereas remaining all pairs has very high correlation between them.')
-
+st.write('')
 st.write('## Parametric and Non-Parametric test for samples')
-
+st.write('')
 
 st.write('##### Test whether acceleration in japan and usa has the same mean')
 shapiro_wilk_test(df[df.origin=='JPN'], ['acceleration'])
@@ -380,9 +382,9 @@ shapiro_wilk_test(df[df.origin=='GER'], ['horsepower'])
 shapiro_wilk_test(df[df.origin=='USA'], ['horsepower'])
 
 st.write('##### So all of them are not normally distributed so we will apply non-parametric test.')
-
+st.write('')
 st.write('### Non-Parametric Statistical Significance Test')
-
+st.write('')
 st.write('##### H_0: Sample distributions are equal for horsepower across region, alpha=0.05')
 st.write('##### Test whether acceleration has same distribution for samples with mpg_level high & medium')
 _, p = stats.mannwhitneyu(df[df.mpg_level=='high'].acceleration, df[df.mpg_level=='medium'].acceleration)
@@ -408,9 +410,9 @@ if p <= ALPHA:
 else:
     st.write(f'Fail to Reject H0 under {ALPHA*100}% significance, Same distributions.')
 
-
+st.write('')
 st.write('## Relation between Categorical and Continuous attributes')
-
+st.write('')
 result_f = feature_selection.f_classif(df.loc[:, 'mpg': 'acceleration'], df.cylinders)
 
 anova_test_cat = pd.DataFrame({
@@ -440,4 +442,3 @@ anova_test_cat['H0'] = anova_test_cat.p.apply(lambda x: 'rejected' if x <= ALPHA
 anova_test_cat['relation'] = anova_test_cat.H0.apply(lambda x: 'dependent' if x=='rejected' else 'independent')
 
 st.table(anova_test_cat)
-
