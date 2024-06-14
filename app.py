@@ -8,7 +8,7 @@ import streamlit as st
 from ydata_profiling import ProfileReport
 from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn import feature_selection
-from matplotlib import pyplot as plt
+from matplotlib import pyplot
 from streamlit_pandas_profiling import st_profile_report
 from statsmodels.graphics.gofplots import qqplot
 
