@@ -260,7 +260,7 @@ fig3 = pyplot.figure(figsize=(18, 8))
 
 for i, num in enumerate(['mpg', 'displacement', 'horsepower', 'acceleration']):
     ax = pyplot.subplot(2, 2, i + 1)
-    sns.histplot(df_tfnum[num], kde=True)
+    sns.histplot(df_tfnum[num], kde=True, stat="density")
     ax.set_xlabel(f'Transformed {num}')
     ax.set_title(f'Transformed {num} Distribution')
     pyplot.tight_layout()
